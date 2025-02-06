@@ -135,7 +135,6 @@ class TeleGramDriver(BaseDriver):
         if not self.application or not self.application.running:
             self.logger.error("Failed to connect Telegram driver: timeout")
         self.connected = True
-        self.send_message(SendMessageRequest(channel=ChannelInfo(id="6519804641", type=MessageType.PRIVATE), content="Bot started", platforms=[Platform.TELEGRAM]))
     
     def disconnect(self) -> None:
         """断开与Telegram平台的连接"""
