@@ -1,5 +1,5 @@
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters, Application
+from telegram import Update, ChatMember, ChatMemberUpdated, Chat
+from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters, Application, ChatMemberHandler, CommandHandler
 from mcdreforged.api.all import *
 from typing import Optional
 import threading
@@ -47,7 +47,43 @@ class TeleGramDriver(BaseDriver):
         
         if self.message_callback:
             self.message_callback(Platform.TELEGRAM, message)
-            
+
+    async def handle_chat_member(self, update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+        """处理群组成员变更事件"""
+        if not update.chat_member:
+            return
+        self.logger.debug(f'update_chat_member: {update}')
+        # 确定事件类型
+        event_type = None
+        if update.chat_member.new_chat_member and update.chat_member.new_chat_member.status == "member":
+            event_type = "guild.member.join"
+        elif update.chat_member.old_chat_member and update.chat_member.old_chat_member.status == "member" and \
+             update.chat_member.new_chat_member and update.chat_member.new_chat_member.status == "left":
+            event_type = "guild.member.leave"
+        
+        if not event_type:
+            return
+
+        # 创建事件对象
+        event = Event(
+            id=str(update.chat_member.date.timestamp()),
+            type=event_type,
+            platform=Platform.TELEGRAM,
+            channel=Channel(
+                id=str(update.chat_member.chat.id),
+                type="group" if update.chat_member.chat.type in ["group", "supergroup"] else "private",
+                name=update.chat_member.chat.title
+            ),
+            user=User(
+                id=str(update.chat_member.new_chat_member.user.id),
+                name=update.chat_member.new_chat_member.user.full_name,
+                avatar=None
+            )
+        )
+        # 触发事件回调
+        if self.event_callback:
+            self.event_callback(Platform.TELEGRAM, event)
+                    
     def connect(self) -> None:
         """连接到Telegram平台"""
         if self.connected:
@@ -65,6 +101,7 @@ class TeleGramDriver(BaseDriver):
                 self.application = builder.build()
                 # 注册消息处理器
                 self.application.add_handler(MessageHandler(filters.TEXT, self.handle_message))
+                self.application.add_handler(ChatMemberHandler(self.handle_chat_member, ChatMemberHandler.CHAT_MEMBER))
                 # 创建停止检查线程
                 def check_stop():
                     asyncio.set_event_loop(loop)
@@ -79,7 +116,7 @@ class TeleGramDriver(BaseDriver):
                 # 启动停止检查线程
                 stop_thread = threading.Thread(target=check_stop, daemon=True)
                 stop_thread.start()
-                self.application.run_polling(stop_signals=None)
+                self.application.run_polling(stop_signals=None, allowed_updates=Update.ALL_TYPES)
             except Exception as e:
                 print(e)
                 self.logger.error(f"Failed to connect Telegram driver: {e}")
