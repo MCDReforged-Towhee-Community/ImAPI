@@ -20,12 +20,8 @@ drivers:
       access_token: ""   # 访问令牌，留空则不验证
       heartbeat: 30  # 心跳间隔（秒）
   
-  # KOOK 驱动配置
+  # Telegram 驱动配置
   - enabled: false
-    platform: kook
+    platform: telegram
     token: ""
-  
-  # Discord 驱动配置
-  - enabled: false
-    platform: discord
-    token: ""
+    http_proxy: ""

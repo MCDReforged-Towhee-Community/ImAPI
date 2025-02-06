@@ -16,7 +16,7 @@ class DriverManager:
         self.instances: Dict[str, BaseDriver] = {}  # 驱动实例映射
         self.logger = Context.get_instance().logger
 
-    def register_driver(self, platform: Union[Platform, str], driver_cls: Type[BaseDriver]) -> None:
+    def register_driver(self, platform: Union[Platform, str], driver_cls: Type[BaseDriver]) -> 'DriverManager':
         """注册驱动类
 
         Args:
@@ -25,6 +25,7 @@ class DriverManager:
         """
         self.drivers[platform] = driver_cls
         self.logger.debug(f"Registered driver for platform: {platform}")
+        return self
 
     def load_driver(self, platform: Union[Platform, str], config: QQConfig) -> None:
         """加载驱动实例
@@ -46,6 +47,36 @@ class DriverManager:
             self.logger.error(
                 f"Failed to load driver for platform {platform}: {e}")
             raise
+
+    def load_drivers_parallel(self, configs: List[QQConfig]) -> None:
+        """并行加载多个驱动实例
+
+        Args:
+            configs: 驱动配置列表
+        """
+        import threading
+        threads = []
+        
+        for config in configs:
+            if not config.enabled:
+                continue
+                
+            platform = config.platform
+            if platform not in self.drivers:
+                self.logger.error(f"No driver registered for platform: {platform}")
+                continue
+
+            thread = threading.Thread(
+                target=self.load_driver,
+                args=(platform, config),
+                daemon=True
+            )
+            threads.append(thread)
+            thread.start()
+
+        # 等待所有线程完成
+        for thread in threads:
+            thread.join()
 
     def unload_driver(self, platform: Union[Platform, str]) -> None:
         """卸载驱动实例

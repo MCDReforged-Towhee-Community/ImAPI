@@ -53,6 +53,16 @@ class QQConfig(DriverConfig):
         self.server = WSServerConfig(**server)
 
 
+class TelegramConfig(DriverConfig):
+    """TG驱动配置"""
+    token: str
+    http_proxy: str
+    
+    def __init__(self, enabled: bool, token: str, http_proxy: str):
+        super().__init__(enabled, Platform.TELEGRAM)
+        self.token = token
+        self.http_proxy = http_proxy
+
 class ImAPIConfig:
     """ImAPI配置"""
     drivers: List[DriverConfig] = []
@@ -108,6 +118,12 @@ class ImAPIConfig:
                     server=driver_data.get('ws_server', {}),
                     client=driver_data.get('ws_client', {})
                 ))
+            elif platform == 'telegram':
+                drivers.append(TelegramConfig(
+                    enabled=driver_data.get('enabled', False),
+                    token= driver_data.get('token', ''),
+                    http_proxy=driver_data.get('http_proxy', '')
+                ))
 
         return cls(drivers=drivers)
 
@@ -139,6 +155,13 @@ class ImAPIConfig:
                         'access_token': driver.client.access_token,
                         'heartbeat': driver.client.heartbeat
                     }
+                }
+            elif isinstance(driver, TelegramConfig):
+                driver_data = {
+                    'enabled': driver.enabled,
+                    'platform': 'telegram',
+                    'token': driver.token,
+                    'http_proxy': driver.http_proxy
                 }
             else:
                 continue

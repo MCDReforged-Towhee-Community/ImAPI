@@ -12,6 +12,7 @@ from im_api.core.bridge import MessageBridge
 from im_api.core.context import Context
 from im_api.drivers.qq import QQDriver
 from im_api.drivers.base import Platform
+from im_api.drivers.tg import TeleGramDriver
 
 class ImAPI:
     """ImAPI 插件主类"""
@@ -29,7 +30,7 @@ class ImAPI:
         self.event_processor = EventProcessor(self.server, self.driver_manager, self.message_bridge)
         
         # 注册驱动
-        self.driver_manager.register_driver(Platform.QQ, QQDriver)
+        self.driver_manager.register_driver(Platform.QQ, QQDriver).register_driver(Platform.TELEGRAM, TeleGramDriver)
 
     def _load_config(self) -> ImAPIConfig:
         """加载配置文件"""
@@ -42,19 +43,12 @@ class ImAPI:
             self.logger.error("Failed to load configuration")
             return False
 
-        # 加载驱动
-        for driver_config in self.config.drivers:
-            platform = driver_config.platform
-            if not driver_config.enabled:
-                continue
-
-            try:
-                self.driver_manager.load_driver(
-                    platform, driver_config)
-            except Exception as e:
-                self.logger.error(
-                    f"Failed to load driver for platform {platform}: {e}")
-                return False
+        # 并行加载驱动
+        try:
+            self.driver_manager.load_drivers_parallel(self.config.drivers)
+        except Exception as e:
+            self.logger.error(f"Failed to load drivers: {e}")
+            return False
         # 注册驱动回调
         self.driver_manager.register_callbacks(
             lambda platform, msg: self.event_processor.on_message(platform, msg),

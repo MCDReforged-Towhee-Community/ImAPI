@@ -29,8 +29,13 @@ class MessageBridge:
         """
         # 遍历所有驱动，处理发送请求
         results = []
+        plats = request.platforms
         for driver in self.driver_manager.get_all_drivers():
             try:
+                # 只响应对应platform的消息事件
+                if driver.get_platform() not in plats:
+                    self.logger.debug(f'platform {driver.get_platform()} not match, Skip')
+                    continue
                 result = driver.send_message(request)
                 if result:
                     results.append(result)

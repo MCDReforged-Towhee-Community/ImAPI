@@ -6,6 +6,7 @@ class Platform(Enum):
     QQ = "qq"            # QQ平台
     KOOK = "kook"        # KOOK平台
     DISCORD = "discord"  # Discord平台
+    TELEGRAM = "telegram" # Telegram平台
     
     @classmethod
     def from_string(cls, value: str) -> 'Platform':
