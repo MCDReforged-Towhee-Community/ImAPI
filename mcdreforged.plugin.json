@@ -1,12 +1,15 @@
 {
   "id": "im_api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "name": "ImAPI",
   "description": {
     "en_us": "Cross-platform instant messaging API",
     "zh_cn": "跨平台即时通信API"
   },
-  "author": ["Andy Zhang", "Aimerny"],
+  "author": [
+    "Andy Zhang",
+    "Aimerny"
+  ],
   "link": "https://github.com/MCDReforged-Towhee-Community/IMAPI",
   "dependencies": {
     "mcdreforged": ">=2.13.0"
