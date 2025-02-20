@@ -1,6 +1,6 @@
 {
   "id": "im_api",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "name": "ImAPI",
   "description": {
     "en_us": "Cross-platform instant messaging API",

@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.0](https://github.com/MCDReforged-Towhee-Community/ImAPI/compare/im_api-v0.1.0...im_api-v0.2.0) (2025-02-20)
+
+
+### Features
+
+* add matrix driver support ([#8](https://github.com/MCDReforged-Towhee-Community/ImAPI/issues/8)) ([99b214f](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/99b214fca6a35531c94c65da62ce81d6c855ae0f))
+
+
+### Bug Fixes
+
+* fix dependency and export ([e8f6a23](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/e8f6a236e2f5da99b1ba7949aecee9779297fabd))
+* version fix ([2e8e4ab](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/2e8e4ab4f97412262de476a1d3466e85a84aba1c))
+
 ## 1.0.0 (2025-02-14)
 
 
