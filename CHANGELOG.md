@@ -1,6 +1,15 @@
 # Changelog
 
 
+## [0.2.1](https://github.com/MCDReforged-Towhee-Community/ImAPI/compare/im_api-v0.2.0...im_api-v0.2.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* doc updagte ([8714e96](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/8714e9669a33594edce073b6385b82be52e734ec))
+* fix readme.md ([0e0c296](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/0e0c29672afd8ba70afa9b2198cc560a40804bef))
+* version fix ([2e8e4ab](https://github.com/MCDReforged-Towhee-Community/ImAPI/commit/2e8e4ab4f97412262de476a1d3466e85a84aba1c))
+
 ## [0.2.0](https://github.com/MCDReforged-Towhee-Community/ImAPI/compare/im_api-v0.1.0...im_api-v0.2.0) (2025-02-20)
 
 
